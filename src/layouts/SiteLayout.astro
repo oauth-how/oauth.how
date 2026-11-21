@@ -1,10 +1,13 @@
 ---
 import {
   BookOpen,
+  FileText,
   FlaskConical,
   GitBranch,
   Info,
   LibraryBig,
+  Moon,
+  Sun,
 } from "@lucide/astro";
 import logoDark from "../../artwork/public/brand/logo-horizontal-dark.svg?url&no-inline";
 import touchIcon from "../../artwork/public/apple-touch-icon.png?url";
@@ -40,11 +43,65 @@ const destinations = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    <meta
-      name="theme-color"
-      content="#10172A"
-      media="(prefers-color-scheme: dark)"
-    />
+    <meta name="theme-color" content="#10172A" />
+    <script is:inline>
+      (() => {
+        const key = "oauth-how-theme";
+        const system = window.matchMedia("(prefers-color-scheme: dark)");
+        const root = document.documentElement;
+
+        function readTheme() {
+          try {
+            const value = localStorage.getItem(key);
+            if (value === "light" || value === "dark") return value;
+          } catch {
+            // Use the system preference when storage is unavailable.
+          }
+        }
+
+        let selected = readTheme();
+        const currentTheme = () =>
+          selected ?? (system.matches ? "dark" : "light");
+
+        function applyTheme() {
+          const theme = currentTheme();
+          root.dataset.theme = theme;
+          const toggle = document.querySelector("[data-theme-toggle]");
+          if (!(toggle instanceof HTMLButtonElement)) return;
+          const label = `Switch to ${theme === "dark" ? "light" : "dark"} mode`;
+          toggle.setAttribute("aria-label", label);
+          toggle.title = label;
+        }
+
+        applyTheme();
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            const toggle = document.querySelector("[data-theme-toggle]");
+            if (!(toggle instanceof HTMLButtonElement)) return;
+            applyTheme();
+            toggle.addEventListener("click", () => {
+              selected = currentTheme() === "dark" ? "light" : "dark";
+              try {
+                localStorage.setItem(key, selected);
+              } catch {
+                // The toggle still works for the current page.
+              }
+              applyTheme();
+            });
+            toggle.hidden = false;
+          },
+          { once: true },
+        );
+
+        system.addEventListener("change", applyTheme);
+        window.addEventListener("pageshow", (event) => {
+          if (!event.persisted) return;
+          selected = readTheme() ?? selected;
+          applyTheme();
+        });
+      })();
+    </script>
     {noindex && <meta name="robots" content="noindex" />}
     <title>{pageTitle}</title>
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -80,10 +137,26 @@ const destinations = [
             </a>
           ))}
         </nav>
-        <a class="source-link" href={repository}>
-          <GitBranch size={16} stroke-width={1.7} aria-hidden="true" />
-          GitHub
-        </a>
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-label="Switch theme"
+          hidden
+        >
+          <Moon
+            class="theme-icon-dark"
+            size={19}
+            stroke-width={1.7}
+            aria-hidden="true"
+          />
+          <Sun
+            class="theme-icon-light"
+            size={19}
+            stroke-width={1.7}
+            aria-hidden="true"
+          />
+        </button>
       </div>
     </header>
     <main id="main">
@@ -94,11 +167,20 @@ const destinations = [
         <a class="wordmark" href="/" aria-label="oauth.how home">
           <img src={logoDark} alt="" width="128" height="26" />
         </a>
-        <p>Open-source education for OAuth and identity.</p>
+        <p>Interactive lessons for OAuth and identity.</p>
         <nav aria-label="Footer navigation">
-          <a href="/about/">Contribute</a>
-          <a href="/reference/#specifications">Specifications</a>
-          <a href={repository}>Source</a>
+          <a href="/about/">
+            <Info size={16} stroke-width={1.7} aria-hidden="true" />
+            About
+          </a>
+          <a href="/reference/#specifications">
+            <FileText size={16} stroke-width={1.7} aria-hidden="true" />
+            Specifications
+          </a>
+          <a href={repository}>
+            <GitBranch size={16} stroke-width={1.7} aria-hidden="true" />
+            GitHub
+          </a>
         </nav>
       </div>
     </footer>

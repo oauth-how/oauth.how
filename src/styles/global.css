@@ -138,7 +138,6 @@ pre code {
   gap: clamp(0.65rem, 2vw, 1.65rem);
 }
 .main-nav a,
-.source-link,
 .footer-inner nav a {
   display: inline-flex;
   align-items: center;
@@ -165,19 +164,31 @@ pre code {
   background: var(--brand-cyan);
 }
 .main-nav a:hover,
-.source-link:hover,
 .footer-inner nav a:hover {
   color: var(--accent);
 }
-.source-link {
+.theme-toggle {
   justify-self: end;
-  min-height: 2.5rem;
-  padding: 0.28rem 0.62rem;
-  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  color: var(--diagram-ink);
+  background: transparent;
+  border: 1px solid var(--diagram-line);
   border-radius: var(--radius);
+  cursor: pointer;
 }
-.source-link:hover {
+.theme-toggle:hover {
+  color: var(--accent);
+  background: var(--diagram-strip);
   border-color: var(--accent);
+}
+.theme-toggle[hidden],
+:root[data-theme="dark"] .theme-icon-dark,
+:root[data-theme="light"] .theme-icon-light {
+  display: none;
 }
 .site-footer {
   border-top: 1px solid var(--border);
@@ -457,9 +468,6 @@ pre code {
   }
   .main-nav svg {
     width: 0.9rem;
-  }
-  .source-link {
-    min-height: 2rem;
   }
 }
 @media (max-width: 23rem) {

@@ -23,23 +23,23 @@
   --brand-navy: var(--oauth-color-navy);
   --brand-cyan: var(--oauth-color-cyan);
   --brand-amber: var(--oauth-color-amber);
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --subtle: #f4f7fa;
-  --ink: var(--brand-navy);
-  --muted: #48566a;
-  --border: #d6dfe8;
-  --border-strong: #aebdcb;
-  --control-border: #7b8c9e;
-  --accent: #006779;
-  --accent-hover: #004756;
-  --accent-wash: #e9f8fb;
+  --bg: light-dark(#ffffff, #0b1222);
+  --surface: light-dark(#ffffff, #101b2f);
+  --subtle: light-dark(#f4f7fa, #131f34);
+  --ink: light-dark(var(--brand-navy), #f0f5fd);
+  --muted: light-dark(#48566a, #b1c0d3);
+  --border: light-dark(#d6dfe8, #35455e);
+  --border-strong: light-dark(#aebdcb, #586b87);
+  --control-border: light-dark(#7b8c9e, #71839e);
+  --accent: light-dark(#006779, #61d8eb);
+  --accent-hover: light-dark(#004756, #aceffa);
+  --accent-wash: light-dark(#e9f8fb, #122d3b);
   --button-bg: var(--brand-cyan);
   --button-hover: #3cc5da;
   --button-text: #091924;
-  --focus: #00778c;
-  --success: #11634f;
-  --danger: #a12639;
+  --focus: light-dark(#00778c, #61d8eb);
+  --success: light-dark(#11634f, #83dccc);
+  --danger: light-dark(#a12639, #ffb3be);
 
   --diagram: var(--brand-navy);
   --diagram-strip: #17223a;
@@ -63,28 +63,16 @@
   --space-16: 4rem;
   --radius: 0.375rem;
   --panel-radius: 0.55rem;
-  --shadow: 0 10px 32px #10172a12;
+  --shadow: 0 10px 32px light-dark(#10172a12, #05091445);
   --measure: 70ch;
   --max-width: 76rem;
   --gutter: clamp(1rem, 3.5vw, 2rem);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b1222;
-    --surface: #101b2f;
-    --subtle: #131f34;
-    --ink: #f0f5fd;
-    --muted: #b1c0d3;
-    --border: #35455e;
-    --border-strong: #586b87;
-    --control-border: #71839e;
-    --accent: #61d8eb;
-    --accent-hover: #aceffa;
-    --accent-wash: #122d3b;
-    --focus: #61d8eb;
-    --success: #83dccc;
-    --danger: #ffb3be;
-    --shadow: 0 10px 32px #05091445;
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }

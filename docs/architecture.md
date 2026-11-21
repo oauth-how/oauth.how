@@ -33,7 +33,8 @@ makes play, pause, stepping, selection, and reset deterministic. The
 browser sets a timer using the selected speed; rendering an animation
 never changes playback state. Reduced motion removes the packet movement
 and keeps the selected row and participants visible. CSS follows the
-system color scheme.
+system color scheme until the visitor picks a light or dark theme in the
+header. The browser saves that choice locally.
 
 ## Visual system
 

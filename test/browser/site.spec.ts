@@ -8,6 +8,33 @@ const lessonSlugs = [
   "jwt-paseto-and-opaque-tokens",
 ];
 
+test("follows the system theme and preserves manual choices across pages", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/");
+  const root = page.locator("html");
+  await expect(root).toHaveCSS("background-color", "rgb(11, 18, 34)");
+
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(root).toHaveCSS("background-color", "rgb(255, 255, 255)");
+
+  const darkToggle = page.getByRole("button", { name: "Switch to dark mode" });
+  await darkToggle.press("Enter");
+  await expect(root).toHaveCSS("background-color", "rgb(11, 18, 34)");
+
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Learn" })
+    .click();
+  await expect(root).toHaveCSS("background-color", "rgb(11, 18, 34)");
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.getByRole("button", { name: "Switch to light mode" }).click();
+  await page.reload();
+  await expect(root).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
 test("serves all lesson directory indexes with production canonicals and a sitemap", async ({
   page,
   request,
