@@ -1,0 +1,43 @@
+---
+import { formatRequest, formatResponse } from "../simulation/http";
+import type { Flow } from "../simulation/schema";
+
+interface Props {
+  flow: Flow;
+}
+
+const { flow } = Astro.props;
+const label = (id: string) =>
+  flow.participants.find((actor) => actor.id === id)?.label;
+---
+
+<details class="static-sequence">
+  <summary>Read the complete transcript</summary>
+  <ol>
+    {flow.events.map((event) => (
+      <li>
+        <strong>{event.title}</strong>
+        <p>
+          {label(event.from)}
+          {event.from !== event.to && ` to ${label(event.to)}`}
+        </p>
+        <p>{event.explanation}</p>
+        {event.security && (
+          <p>
+            <strong>Security</strong> {event.security}
+          </p>
+        )}
+        {event.request && <pre><code>{formatRequest(event.request)}</code></pre>}
+        {event.response && <pre><code>{formatResponse(event.response)}</code></pre>}
+        <p>
+          {event.references.map((ref, index) => (
+            <>
+              {index > 0 && " · "}
+              <a href={ref.url}>{ref.label}</a>
+            </>
+          ))}
+        </p>
+      </li>
+    ))}
+  </ol>
+</details>

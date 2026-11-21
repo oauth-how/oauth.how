@@ -1,0 +1,27 @@
+---
+import SimulationPlayer from "./SimulationPlayer";
+import StaticSequence from "./StaticSequence.astro";
+import type { Flow } from "../simulation/schema";
+
+interface Props {
+  flow: Flow;
+  anchor?: string;
+  heading?: string;
+}
+
+const { flow, anchor = flow.id, heading = flow.title } = Astro.props;
+---
+
+<section
+  class="lesson-simulation"
+  id={anchor}
+  aria-labelledby={`${anchor}-heading`}
+>
+  <h2 id={`${anchor}-heading`}>{heading}</h2>
+  <p>
+    Step through the exchange and inspect the HTTP excerpts. All hosts and
+    credentials are fictional.
+  </p>
+  <SimulationPlayer flow={flow} client:visible />
+  <StaticSequence flow={flow} />
+</section>
