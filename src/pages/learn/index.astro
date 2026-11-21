@@ -1,4 +1,17 @@
 ---
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  UserRound,
+  KeyRound,
+  Layers,
+  ListOrdered,
+  Network,
+  ShieldCheck,
+  SlidersHorizontal,
+  Workflow,
+} from "@lucide/astro";
 import { getCollection } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { curriculum } from "../../lib/curriculum";
@@ -6,13 +19,28 @@ import { curriculum } from "../../lib/curriculum";
 const lessons = (await getCollection("lessons")).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const icons = {
+  foundations: BookOpen,
+  oauth: Workflow,
+  oidc: UserRound,
+  tokens: KeyRound,
+  authorization: SlidersHorizontal,
+  security: ShieldCheck,
+  advanced: Network,
+};
+const chapters = curriculum.map((track, index) => ({
+  ...track,
+  icon: icons[track.id],
+  number: String(index + 1).padStart(2, "0"),
+  lessons: lessons.filter((lesson) => lesson.data.track === track.id),
+}));
 ---
 
 <SiteLayout
   title="Learn"
   description="Follow a progressive curriculum on OAuth, OpenID Connect, tokens, and authorization."
 >
-  <div class="wrap page">
+  <div class="wrap page curriculum-page">
     <header class="page-intro">
       <h1>Learn</h1>
       <p>
@@ -20,34 +48,87 @@ const lessons = (await getCollection("lessons")).sort(
         authorization flow and examine the tokens it produces.
       </p>
     </header>
-    <nav class="track-nav" aria-label="Curriculum sections">
-      {curriculum.map(({ id, title }) => (
-        <a href={`#${id}`}>{title}</a>
-      ))}
-    </nav>
-    <div class="curriculum">
-      {curriculum.map(({ id, title, level, topics }) => (
-        <section class="track" id={id}>
-          <p class="eyebrow">{level}</p>
-          <h2>{title}</h2>
-          {lessons
-            .filter((lesson) => lesson.data.track === id)
-            .map((lesson) => (
-              <a class="lesson-link" href={`/learn/${lesson.id}/`}>
-                <strong>{lesson.data.title}</strong>
-                <span>{lesson.data.description}</span>
+    <div class="docs-layout curriculum">
+      <nav class="section-index" aria-label="Curriculum sections">
+        <p>
+          <ListOrdered size={17} stroke-width={1.8} aria-hidden="true" />{" "}
+          Chapters
+        </p>
+        <ol>
+          {chapters.map(({ id, title, number }) => (
+            <li>
+              <a href={`#${id}`}>
+                <span class="chapter-number">{number}</span>
+                {title}
               </a>
-            ))}
-          <details class="track-topics">
-            <summary>Planned topics</summary>
-            <ul>
-              {topics.map((topic) => (
-                <li>{topic}</li>
-              ))}
-            </ul>
-          </details>
-        </section>
-      ))}
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <div class="chapter-list">
+        {chapters.map(
+          ({ id, title, level, topics, number, icon: Icon, lessons }) => (
+            <section class="chapter" id={id} aria-labelledby={`${id}-heading`}>
+              <header class="chapter-heading">
+                <div class="chapter-icon">
+                  <Icon size={21} stroke-width={1.7} aria-hidden="true" />
+                </div>
+                <div>
+                  <div class="chapter-meta">
+                    <span class="chapter-number">Chapter {number}</span>
+                    <span>{level}</span>
+                  </div>
+                  <h2 id={`${id}-heading`}>{title}</h2>
+                </div>
+                {lessons.length === 0 && (
+                  <span class="chapter-status">
+                    <Layers size={14} stroke-width={1.8} aria-hidden="true" />
+                    Planned
+                  </span>
+                )}
+              </header>
+              {lessons.length > 0 && (
+                <ol class="chapter-lessons" aria-label="Available lessons">
+                  {lessons.map((lesson) => (
+                    <li>
+                      <a class="lesson-link" href={`/learn/${lesson.id}/`}>
+                        <span class="lesson-index">
+                          {String(lesson.data.order).padStart(2, "0")}
+                        </span>
+                        <span class="lesson-link-copy">
+                          <strong>{lesson.data.title}</strong>
+                          <span>{lesson.data.description}</span>
+                        </span>
+                        <ChevronRight
+                          size={18}
+                          stroke-width={1.8}
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              )}
+              <details class="track-topics">
+                <summary>
+                  <ChevronDown
+                    size={16}
+                    stroke-width={1.8}
+                    aria-hidden="true"
+                  />
+                  {lessons.length ? "Planned topics" : "Browse topics"}{" "}
+                  <span>({topics.length})</span>
+                </summary>
+                <ul>
+                  {topics.map((topic) => (
+                    <li>{topic}</li>
+                  ))}
+                </ul>
+              </details>
+            </section>
+          ),
+        )}
+      </div>
     </div>
   </div>
 </SiteLayout>

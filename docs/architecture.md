@@ -2,7 +2,7 @@
 
 Astro 7 builds the site as directory-index HTML. The site uses Astro's
 MDX, SolidJS, and sitemap integrations and the globally shared CSS
-tokens in `src/styles/global.css`. The lockfile records the tested
+tokens in `src/styles/design.css`. The lockfile records the tested
 versions. Node 24 LTS is the shared baseline for developer machines,
 GitHub Actions, and Cloudflare Pages. The Solid integration uses the
 compatible SolidJS 1.9 release line. Native CSS, SVG, timers, and Web
@@ -23,9 +23,10 @@ Crypto keep the runtime dependencies focused on hydration and rendering.
 Build-time schemas catch missing fields and invalid actor relationships.
 The lesson template resolves optional simulation IDs. MDX authors can
 write prose without importing UI code. The static transcript and the
-interactive player use the same flow data and HTTP formatter. Ordinary
-lessons and the homepage preview are static HTML and SVG. Astro
-hydrates the interactive areas on visibility.
+interactive player use the same flow data and HTTP formatter. The
+homepage hydrates a compact view of the same PKCE player, and the
+Playground and applicable lessons render the full trace. Astro hydrates
+the interactive areas on visibility.
 
 Playback intentionally advances through a fixed linear trace. A reducer
 makes play, pause, stepping, selection, and reset deterministic. The
@@ -33,6 +34,16 @@ browser sets a timer using the selected speed; rendering an animation
 never changes playback state. Reduced motion removes the packet movement
 and keeps the selected row and participants visible. CSS follows the
 system color scheme.
+
+## Visual system
+
+The approved logos and palette come from `artwork/`. Use semantic UI
+colors from `src/styles/design.css` for surfaces, copy, focus, and controls.
+The navy sequence canvas uses the original cyan and amber for selected
+requests and responses. Step labels and line patterns communicate
+meaning alongside color. Inter and JetBrains Mono are served with the
+static build. Use Lucide Astro components in static layouts and Lucide
+Solid components inside islands.
 
 ## Verification
 

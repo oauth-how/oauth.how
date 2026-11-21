@@ -1,82 +1,135 @@
 .token-lab {
-  margin-top: 3rem;
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
 }
 .token-lab > p {
-  max-width: 72ch;
+  max-width: var(--measure);
   color: var(--muted);
   margin: 0.65rem 0 1rem;
 }
 .token-inspector {
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--panel-radius);
   background: var(--surface);
+  overflow: clip;
 }
 .token-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.75rem 1.2rem;
+  align-items: end;
+  gap: 0.65rem 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--subtle);
 }
 .token-controls label,
 .token-clock {
   display: grid;
   gap: 0.25rem;
 }
-.token-controls label > span,
+.token-controls label {
+  min-width: min(100%, 12rem);
+}
+.token-controls label > span:first-child,
 .token-clock > span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   color: var(--muted);
   font-size: 0.88rem;
   font-weight: 650;
 }
-.token-controls select,
 .token-clock time {
-  min-height: 2.85rem;
-  padding: 0.55rem 0.65rem;
+  padding: 0.42rem 0.62rem;
+  min-height: 2.65rem;
+  align-content: center;
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   color: var(--ink);
   background: var(--surface);
-  font: inherit;
+  font: 0.84rem var(--mono);
 }
-.token-clock time {
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  align-content: center;
-}
-.token-controls button:disabled {
-  opacity: 0.65;
-  cursor: default;
+.token-controls .button {
+  min-height: 2.65rem;
 }
 .token-raw {
-  margin-top: 1rem;
+  margin: 0.8rem 1rem 0;
 }
 .token-raw summary {
+  display: flex;
+  align-items: center;
+  gap: 0.33rem;
+  width: fit-content;
   cursor: pointer;
-  font-weight: 650;
+  color: var(--accent);
+  font-size: 0.94rem;
+  font-weight: 660;
+  list-style: none;
+}
+.token-raw summary::-webkit-details-marker {
+  display: none;
+}
+.token-raw[open] summary svg {
+  transform: rotate(180deg);
 }
 .token-inspector pre {
   margin: 0.45rem 0 0;
-  padding: 0.85rem;
-  background: var(--diagram);
-  color: var(--on-dark);
-  border-radius: 0.55rem;
-  font-size: 0.91rem;
+  padding: 0.79rem;
+  background: var(--diagram-code);
+  color: var(--diagram-ink);
+  border: 1px solid var(--diagram-border);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
 }
 .token-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  align-items: start;
+  gap: 0.8rem;
+  margin: 0.8rem 1rem 0;
+}
+.token-fields > div {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--diagram-border);
+  border-radius: var(--radius);
+  overflow: clip;
 }
 .token-fields h3 {
-  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.52rem 0.75rem;
+  border-bottom: 1px solid var(--diagram-border);
+  color: var(--diagram-ink);
+  background: var(--diagram-strip);
+  font-size: 0.88rem;
+  letter-spacing: 0;
+}
+.token-fields h3 svg {
+  color: var(--diagram-request);
+}
+.token-fields pre {
+  border: 0;
+  border-radius: 0;
+  flex: 1;
+  margin: 0;
 }
 .token-result {
-  margin-top: 1rem;
-  padding: 0.65rem 0.8rem;
+  margin: 0.85rem 1rem 1rem;
+  padding: 0.6rem 0.75rem;
   background: var(--subtle);
-  border-radius: 0.5rem;
+  border-left: 2px solid var(--border-strong);
+  font-size: 0.94rem;
+}
+.token-result p {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.token-result p svg {
+  align-self: center;
 }
 .token-result .accepted {
   color: var(--success);
@@ -87,5 +140,27 @@
 @media (max-width: 40rem) {
   .token-fields {
     grid-template-columns: 1fr;
+  }
+  .token-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 0.75rem;
+  }
+  .token-controls label {
+    min-width: 0;
+  }
+  .token-clock time {
+    padding-inline: 0.35rem;
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+  }
+  .token-controls .button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .token-raw,
+  .token-fields,
+  .token-result {
+    margin-inline: 0.75rem;
   }
 }

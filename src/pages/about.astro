@@ -1,4 +1,5 @@
 ---
+import { MessageSquare, GitBranch, GitPullRequest } from "@lucide/astro";
 import SiteLayout from "../layouts/SiteLayout.astro";
 const repository = "https://github.com/oauth-how/oauth.how";
 ---
@@ -15,37 +16,50 @@ const repository = "https://github.com/oauth-how/oauth.how";
         identity.
       </p>
     </header>
-    <div class="prose">
-      <p>
-        OAuth is easier to understand once you can see who sends each message,
-        who receives it, and which checks they make. oauth.how pairs short
-        lessons with a trace you can pause and inspect. All accounts, hosts,
-        credentials, and tokens in the exercises are fictional.
-      </p>
-      <h2>Contribute</h2>
-      <p>
-        Help improve a lesson, check a protocol trace against its specification,
-        or add a new example. If a detail looks wrong, include the page, the
-        relevant step, and a section of the specification when filing an issue.
-      </p>
-      <ul>
-        <li>
-          <a href={repository + "/issues"}>Open an issue on GitHub</a>
-        </li>
-        <li>
-          <a href={repository + "/blob/HEAD/CONTRIBUTING.md"}>
-            Read the contribution guide
-          </a>
-        </li>
-        <li>
-          <a href={repository}>Browse the source</a>
-        </li>
-      </ul>
-      <h2>License</h2>
-      <p>
-        The site and its original illustrations are available under the{" "}
-        <a href={repository + "/blob/HEAD/LICENSE"}>BSD 3-Clause License</a>.
-      </p>
+    <div class="project-layout">
+      <div class="prose">
+        <p>
+          OAuth is easier to understand once you can see who sends each message,
+          who receives it, and which checks they make. oauth.how pairs short
+          lessons with a trace you can pause and inspect. All accounts, hosts,
+          credentials, and tokens in the exercises are fictional.
+        </p>
+        <h2>Contribute</h2>
+        <p>
+          Help improve a lesson, check a protocol trace against its
+          specification, or add a new example. If a detail looks wrong, include
+          the page, the relevant step, and a section of the specification when
+          filing an issue.
+        </p>
+        <h2>License</h2>
+        <p>
+          The site and its original illustrations are available under the{" "}
+          <a href={repository + "/blob/HEAD/LICENSE"}>BSD 3-Clause License</a>.
+        </p>
+      </div>
+      <aside class="project-links" aria-labelledby="contribution-links">
+        <h2 id="contribution-links">Get involved</h2>
+        <ul>
+          <li>
+            <a href={repository + "/issues"}>
+              <MessageSquare size={18} stroke-width={1.8} aria-hidden="true" />
+              Open an issue on GitHub
+            </a>
+          </li>
+          <li>
+            <a href={repository + "/blob/HEAD/CONTRIBUTING.md"}>
+              <GitPullRequest size={18} stroke-width={1.8} aria-hidden="true" />
+              Read the contribution guide
+            </a>
+          </li>
+          <li>
+            <a href={repository}>
+              <GitBranch size={18} stroke-width={1.8} aria-hidden="true" />
+              Browse the source
+            </a>
+          </li>
+        </ul>
+      </aside>
     </div>
   </div>
 </SiteLayout>

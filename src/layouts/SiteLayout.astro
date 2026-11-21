@@ -1,5 +1,16 @@
 ---
+import {
+  BookOpen,
+  FlaskConical,
+  GitBranch,
+  Info,
+  LibraryBig,
+} from "@lucide/astro";
+import logoDark from "../../artwork/public/brand/logo-horizontal-dark.svg?url&no-inline";
+import touchIcon from "../../artwork/public/apple-touch-icon.png?url";
+import ogImage from "../../artwork/public/social/og-image.png?url";
 import "../styles/global.css";
+import "../styles/pages.css";
 
 interface Props {
   title: string;
@@ -12,11 +23,13 @@ const { title, description, home, noindex } = Astro.props;
 const pageTitle = home ? title : `${title} · oauth.how`;
 const pathname = Astro.url.pathname;
 const canonical = new URL(pathname, Astro.site);
+const socialImage = new URL(ogImage, Astro.site);
+const repository = "https://github.com/oauth-how/oauth.how";
 const destinations = [
-  { href: "/learn/", label: "Learn" },
-  { href: "/playground/", label: "Playground" },
-  { href: "/reference/", label: "Reference" },
-  { href: "/about/", label: "About" },
+  { href: "/learn/", label: "Learn", icon: BookOpen },
+  { href: "/playground/", label: "Playground", icon: FlaskConical },
+  { href: "/reference/", label: "Reference", icon: LibraryBig },
+  { href: "/about/", label: "About", icon: Info },
 ];
 ---
 
@@ -27,6 +40,11 @@ const destinations = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#10172A"
+      media="(prefers-color-scheme: dark)"
+    />
     {noindex && <meta name="robots" content="noindex" />}
     <title>{pageTitle}</title>
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -35,8 +53,11 @@ const destinations = [
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content="oauth.how logo" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={touchIcon} sizes="180x180" />
   </head>
   <body>
     <a class="skip-link" href="#main">
@@ -45,33 +66,23 @@ const destinations = [
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="wordmark" href="/" aria-label="oauth.how home">
-          <img src="/favicon.svg" alt="" width="34" height="34" />
-          oauth<span>.how</span>
+          <img src={logoDark} alt="" width="160" height="32" />
         </a>
-        <nav aria-label="Main navigation">
-          {destinations.map(({ href, label }) => (
+        <nav class="main-nav" aria-label="Main navigation">
+          {destinations.map(({ href, label, icon: Icon }) => (
             <a
               href={href}
               class:list={{ current: pathname.startsWith(href) }}
               aria-current={pathname === href ? "page" : undefined}
             >
+              <Icon size={17} stroke-width={1.7} aria-hidden="true" />
               {label}
             </a>
           ))}
         </nav>
-        <a class="source-link" href="https://github.com/oauth-how/oauth.how">
+        <a class="source-link" href={repository}>
+          <GitBranch size={16} stroke-width={1.7} aria-hidden="true" />
           GitHub
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-13-2 14" />
-          </svg>
         </a>
       </div>
     </header>
@@ -80,15 +91,14 @@ const destinations = [
     </main>
     <footer class="site-footer">
       <div class="wrap footer-inner">
-        <a class="wordmark" href="/">
-          <img src="/favicon.svg" alt="" width="30" height="30" />
-          oauth<span>.how</span>
+        <a class="wordmark" href="/" aria-label="oauth.how home">
+          <img src={logoDark} alt="" width="128" height="26" />
         </a>
         <p>Open-source education for OAuth and identity.</p>
         <nav aria-label="Footer navigation">
           <a href="/about/">Contribute</a>
           <a href="/reference/#specifications">Specifications</a>
-          <a href="https://github.com/oauth-how/oauth.how">Source</a>
+          <a href={repository}>Source</a>
         </nav>
       </div>
     </footer>

@@ -1,4 +1,5 @@
 ---
+import { Braces, Network } from "@lucide/astro";
 import FlowSimulation from "../components/FlowSimulation.astro";
 import { pkceFlow } from "../simulation/flows/authorization-code-pkce";
 import TokenInspector from "../components/TokenInspector";
@@ -9,7 +10,7 @@ import SiteLayout from "../layouts/SiteLayout.astro";
   title="Playground"
   description="Step through OAuth Authorization Code with PKCE and verify a sample JWT with the browser’s Web Crypto API."
 >
-  <div class="wrap page">
+  <div class="wrap page playground">
     <header class="page-intro">
       <h1>Playground</h1>
       <p>
@@ -17,6 +18,16 @@ import SiteLayout from "../layouts/SiteLayout.astro";
         access token.
       </p>
     </header>
+    <nav class="tool-nav" aria-label="Playground sections">
+      <a href="#pkce">
+        <Network size={17} stroke-width={1.8} aria-hidden="true" />
+        Authorization Code + PKCE
+      </a>
+      <a href="#tokens">
+        <Braces size={17} stroke-width={1.8} aria-hidden="true" />
+        JWT inspector
+      </a>
+    </nav>
     <FlowSimulation flow={pkceFlow} anchor="pkce" />
     <section class="token-lab" id="tokens" aria-labelledby="token-heading">
       <h2 id="token-heading">Inspect a JWT</h2>

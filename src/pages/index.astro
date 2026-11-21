@@ -1,6 +1,39 @@
 ---
-import FlowPreview from "../components/FlowPreview.astro";
+import {
+  BookOpen,
+  Braces,
+  ChevronRight,
+  Network,
+  Play,
+  Radio,
+} from "@lucide/astro";
 import SiteLayout from "../layouts/SiteLayout.astro";
+import SimulationPlayer from "../components/SimulationPlayer";
+import { pkceFlow } from "../simulation/flows/authorization-code-pkce";
+
+const entryPoints = [
+  {
+    href: "/learn/authentication-vs-authorization/",
+    icon: BookOpen,
+    label: "Read the first lesson",
+    question: "Is signing in the same as granting access?",
+    description: "Untangle identity, permissions, and delegated access.",
+  },
+  {
+    href: "/learn/authorization-code-pkce/",
+    icon: Network,
+    label: "Follow Authorization Code + PKCE",
+    question: "What happens after you click Connect?",
+    description: "Follow the browser redirect, code exchange, and API call.",
+  },
+  {
+    href: "/playground/#tokens",
+    icon: Braces,
+    label: "Open the token inspector",
+    question: "What’s inside an access token?",
+    description: "Decode a sample JWT, then test its signature and claims.",
+  },
+];
 ---
 
 <SiteLayout
@@ -11,84 +44,77 @@ import SiteLayout from "../layouts/SiteLayout.astro";
   <section class="home-hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">
-          <span></span> OAuth, OpenID Connect &amp; tokens
+        <p class="kicker">
+          <Radio size={16} stroke-width={1.8} aria-hidden="true" />
+          Interactive protocol guide
         </p>
         <h1>
-          OAuth explained.
-          <br />
-          <em>One flow at a time.</em>
+          <span>OAuth explained.</span>
+          <span>One flow at a time.</span>
         </h1>
         <p class="hero-description">
-          See what happens between the browser, the app, and the API. Follow
-          each message, inspect the HTTP, and understand why the protocol works.
+          What happens between your browser, an app, and an API? Step through an
+          OAuth flow, inspect the HTTP messages, and see what each actor checks.
         </p>
         <div class="hero-actions">
           <a class="button primary" href="/learn/">
+            <BookOpen size={18} stroke-width={1.8} aria-hidden="true" />
             Start learning
           </a>
           <a class="button secondary" href="/playground/">
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path
-                d="M6 3.5 16 10 6 16.5V3.5Z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <Play size={17} stroke-width={1.8} aria-hidden="true" />
             Try the playground
           </a>
         </div>
       </div>
-      <FlowPreview />
+      <section
+        class="hero-demo"
+        aria-label="Interactive Authorization Code with PKCE preview"
+      >
+        <SimulationPlayer flow={pkceFlow} compact client:visible />
+        <noscript>
+          <p class="no-js-demo">
+            <a href="/playground/#pkce">
+              Read the full flow transcript in the Playground.
+            </a>
+          </p>
+        </noscript>
+      </section>
     </div>
   </section>
-  <section class="wrap home-paths">
-    <div class="section-heading">
-      <h2>Find your starting point</h2>
-      <p>Build the mental model, then follow the messages on the wire.</p>
-    </div>
-    <div class="path-grid">
-      <a class="path-card" href="/learn/authentication-vs-authorization/">
-        <span class="path-icon lavender">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 6v14m0-14C9 4 6 4 3 5v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Z" />
-          </svg>
-        </span>
-        <h3>Start with the basics</h3>
+  <section class="home-paths" aria-labelledby="start-heading">
+    <div class="wrap paths-layout">
+      <header>
+        <h2 id="start-heading">Start with a question</h2>
         <p>
-          Learn what authentication, authorization, and delegated access each
-          do.
+          Pick a concept, follow a flow, or get hands-on with a sample token.
         </p>
-        <span class="path-link">Read the first lesson</span>
-      </a>
-      <a class="path-card" href="/learn/authorization-code-pkce/">
-        <span class="path-icon mint">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h15m-4-4 4 4-4 4m5 6H5m4-4-4 4 4 4" />
-          </svg>
-        </span>
-        <h3>Follow a real flow</h3>
-        <p>
-          Step through Authorization Code + PKCE, from the browser redirect to
-          the API call.
-        </p>
-        <span class="path-link">Explore Authorization Code + PKCE</span>
-      </a>
-      <a class="path-card" href="/playground/#tokens">
-        <span class="path-icon peach">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m8 5-6 7 6 7m8-14 6 7-6 7m-2-16-4 18" />
-          </svg>
-        </span>
-        <h3>Look inside a token</h3>
-        <p>
-          Decode a sample JWT and see what changes when you verify its signature
-          and claims.
-        </p>
-        <span class="path-link">Open the token inspector</span>
-      </a>
+      </header>
+      <ul class="path-list">
+        {entryPoints.map(
+          ({ href, icon: Icon, label, question, description }) => (
+            <li>
+              <a class="path-link" href={href}>
+                <span class="path-icon">
+                  <Icon size={22} stroke-width={1.7} aria-hidden="true" />
+                </span>
+                <span class="path-content">
+                  <strong>{question}</strong>
+                  <span>{description}</span>
+                </span>
+                <span class="path-action">
+                  <span>{label}</span>
+                  <ChevronRight
+                    size={18}
+                    stroke-width={1.8}
+                    aria-hidden="true"
+                  />
+                </span>
+              </a>
+            </li>
+          ),
+        )}
+      </ul>
     </div>
   </section>
 </SiteLayout>

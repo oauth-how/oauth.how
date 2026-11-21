@@ -7,30 +7,79 @@ import {
   onMount,
   Show,
 } from "solid-js";
-import type { Flow } from "../simulation/schema";
+import { Dynamic } from "solid-js/web";
+import { AppWindow, Braces, Network, Server, ShieldCheck } from "lucide-solid";
+import type { Flow, FlowEvent } from "../simulation/schema";
 import type { Speed } from "../simulation/engine";
 
 interface Props {
   flow: Flow;
   index: number;
   speed: Speed;
+  compact?: boolean;
 }
 
-const rowHeight = 29;
-const headerHeight = 77;
+const trafficTones = [
+  "request",
+  "response",
+  "interaction",
+  "internal",
+] as const;
+
+const actorIcons: Record<string, typeof AppWindow> = {
+  browser: AppWindow,
+  client: Braces,
+  "authorization-server": ShieldCheck,
+  api: Server,
+};
+
+function trafficTone(event: FlowEvent) {
+  if (event.channel === "local") return "internal";
+  if (event.request) return "request";
+  if (event.response) return "response";
+  return "interaction";
+}
+
+function rowLabel(event: FlowEvent) {
+  if (event.request) return event.request.method;
+  if (event.response) return String(event.response.status);
+  if (event.kind === "authentication") return "AUTH";
+  if (event.kind === "consent") return "CONSENT";
+  return event.channel === "local" ? "CHECK" : "EVENT";
+}
 
 export default function SequenceDiagram(props: Props) {
   const id = createUniqueId();
   const [allowMotion, setAllowMotion] = createSignal(false);
-  const width = Math.max(430, 48 + props.flow.participants.length * 96);
-  const height = headerHeight + props.flow.events.length * rowHeight;
+  const rowHeight = 24;
+  const headerHeight = 78;
+  const width = Math.max(470, 88 + props.flow.participants.length * 95);
+  const visibleCount = () =>
+    props.compact
+      ? Math.min(3, props.flow.events.length)
+      : props.flow.events.length;
+  const firstRow = () =>
+    props.compact
+      ? Math.min(
+          Math.max(0, props.index - 1),
+          props.flow.events.length - visibleCount(),
+        )
+      : 0;
+  const visibleEvents = () =>
+    props.flow.events.slice(firstRow(), firstRow() + visibleCount());
+  const height = () => headerHeight + visibleCount() * rowHeight + 5;
   const lane = (index: number) =>
-    50 + ((index + 0.5) * (width - 55)) / props.flow.participants.length;
+    86 + ((index + 0.5) * (width - 96)) / props.flow.participants.length;
   const position = (id: string) =>
     lane(
       props.flow.participants.findIndex((participant) => participant.id === id),
     );
+  const row = (index: number) => headerHeight + index * rowHeight - 4;
   const selected = () => props.flow.events[props.index];
+  const selectedTone = () => {
+    const event = selected();
+    return event && trafficTone(event);
+  };
   const active = (id: string) =>
     selected()?.from === id || selected()?.to === id;
   let packet: SVGCircleElement | undefined;
@@ -62,41 +111,43 @@ export default function SequenceDiagram(props: Props) {
     <div class="sequence-scroll">
       <svg
         class="sequence"
-        style={{ "min-width": `${Math.ceil(width * 0.73)}px` }}
-        viewBox={`0 0 ${width} ${height}`}
+        style={{ "min-width": `${Math.ceil(width * 0.7)}px` }}
+        viewBox={`0 0 ${width} ${height()}`}
         role="img"
         aria-labelledby={`${id}-title ${id}-description`}
       >
-        <title id={`${id}-title`}>{props.flow.title} sequence diagram</title>
+        <title id={`${id}-title`}>
+          {props.compact
+            ? "Authorization Code with PKCE preview"
+            : `${props.flow.title} sequence diagram`}
+        </title>
         <desc id={`${id}-description`}>
           {props.flow.participants.map(({ label }) => label).join(", ")}.
           Highlighted step {props.index + 1}: {selected()?.title}.
         </desc>
         <defs>
-          <marker
-            id={`${id}-arrow`}
-            class="sequence-arrow"
-            orient="auto"
-            markerUnits="userSpaceOnUse"
-            markerWidth="8"
-            markerHeight="8"
-            refX="8"
-            refY="4"
-          >
-            <path d="M0 0L8 4 0 8z" />
-          </marker>
-          <marker
-            id={`${id}-arrow-active`}
-            class="sequence-arrow is-active"
-            orient="auto"
-            markerUnits="userSpaceOnUse"
-            markerWidth="8"
-            markerHeight="8"
-            refX="8"
-            refY="4"
-          >
-            <path d="M0 0L8 4 0 8z" />
-          </marker>
+          <For each={trafficTones}>
+            {(tone) => (
+              <For each={[false, true]}>
+                {(active) => (
+                  <marker
+                    id={`${id}-arrow-${tone}${active ? "-active" : ""}`}
+                    class="sequence-arrow"
+                    classList={{ "is-active": active }}
+                    data-tone={tone}
+                    orient="auto"
+                    markerUnits="userSpaceOnUse"
+                    markerWidth="7"
+                    markerHeight="7"
+                    refX="7"
+                    refY="3.5"
+                  >
+                    <path d="M0 0L7 3.5 0 7z" />
+                  </marker>
+                )}
+              </For>
+            )}
+          </For>
         </defs>
         <For each={props.flow.participants}>
           {(participant, index) => (
@@ -106,59 +157,74 @@ export default function SequenceDiagram(props: Props) {
                 "is-active": active(participant.id),
               }}
             >
-              <rect
-                x={lane(index()) - 43}
-                y="16"
-                width="86"
-                height="34"
-                rx="7"
-              />
-              <text x={lane(index())} y="38" text-anchor="middle">
-                {participant.shortLabel}
-              </text>
               <path
                 class="sequence-lane"
-                d={`M${lane(index())} 50V${height - 10}`}
+                d={`M${lane(index())} 54V${height() - 10}`}
               />
+              <rect
+                x={lane(index()) - 43}
+                y="8"
+                width="86"
+                height="47"
+                rx="4"
+              />
+              <g
+                transform={`translate(${lane(index()) - 9} 13)`}
+                aria-hidden="true"
+                class="sequence-actor-icon"
+              >
+                <Dynamic
+                  component={actorIcons[participant.id] ?? Network}
+                  size={18}
+                  strokeWidth={1.75}
+                />
+              </g>
+              <text x={lane(index())} y="45" text-anchor="middle">
+                {participant.shortLabel}
+              </text>
             </g>
           )}
         </For>
-        <For each={props.flow.events}>
+        <For each={visibleEvents()}>
           {(event, index) => {
-            const y = () => headerHeight + index() * rowHeight - 9;
+            const absoluteIndex = () => firstRow() + index();
+            const y = () => row(index());
+            const isActive = () => absoluteIndex() === props.index;
             const from = position(event.from);
             const to = position(event.to);
-            const direction = Math.sign(to - from);
-            const end = to - direction * 3;
+            const end = to - Math.sign(to - from) * 3;
+            const tone = trafficTone(event);
             const path = () =>
-              event.from === event.to
-                ? `M${from} ${y() - 5}h-24v11h24`
+              from === to
+                ? `M${from} ${y() - 5}h-23v11h23`
                 : `M${from} ${y()}H${end}`;
             return (
               <g
-                classList={{
-                  "sequence-row": true,
-                  "is-active": index() === props.index,
-                }}
+                classList={{ "sequence-row": true, "is-active": isActive() }}
+                data-tone={tone}
               >
-                <Show when={index() === props.index}>
+                <Show when={isActive()}>
                   <rect
                     class="sequence-band"
-                    x="9"
-                    y={y() - 12}
-                    width={width - 18}
-                    height="24"
-                    rx="5"
+                    x="5"
+                    y={y() - 11}
+                    width={width - 10}
+                    height="22"
+                    rx="3"
                   />
+                  <path class="sequence-notch" d={`M7 ${y() - 8}v16`} />
                 </Show>
-                <text x="29" y={y() + 4} text-anchor="middle">
-                  {String(index() + 1).padStart(2, "0")}
+                <text class="sequence-number" x="15" y={y() + 4}>
+                  {String(absoluteIndex() + 1).padStart(2, "0")}
+                </text>
+                <text class="sequence-kind" x="42" y={y() + 3.5}>
+                  {rowLabel(event)}
                 </text>
                 <path
                   class="sequence-message"
-                  d={path()}
                   classList={{ browser: event.channel === "browser" }}
-                  marker-end={`url(#${id}-arrow${index() === props.index ? "-active" : ""})`}
+                  d={path()}
+                  marker-end={`url(#${id}-arrow-${tone}${isActive() ? "-active" : ""})`}
                 />
               </g>
             );
@@ -169,9 +235,10 @@ export default function SequenceDiagram(props: Props) {
             packet = element;
           }}
           class="sequence-packet"
+          data-tone={selectedTone()}
           cx={position(selected()?.to ?? props.flow.participants[0]?.id ?? "")}
-          cy={headerHeight + props.index * rowHeight - 9}
-          r="4.5"
+          cy={row(props.index - firstRow())}
+          r="3.5"
           visibility={
             selected()?.from === selected()?.to ? "hidden" : "visible"
           }

@@ -79,6 +79,9 @@ test("keeps the homepage and dark-mode playground inside a mobile viewport", asy
   );
 
   await page.getByRole("link", { name: "Try the playground" }).click();
+  await expect(
+    page.getByRole("button", { name: "Play", exact: true }),
+  ).toBeInViewport();
   const select = page.getByLabel("Jump to step");
   await select.selectOption("7");
   await expect(page.locator(".http-message code")).toContainText(
@@ -87,4 +90,30 @@ test("keeps the homepage and dark-mode playground inside a mobile viewport", asy
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     360,
   );
+});
+
+test("steps through the compact live flow from the homepage first viewport", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const demo = page.getByRole("region", {
+    name: "Interactive Authorization Code with PKCE preview",
+  });
+  const next = demo.getByRole("button", { name: "Next", exact: true });
+  await expect(next).toBeInViewport();
+  await expect(
+    demo.getByText("HTTP request", { exact: true }),
+  ).toBeInViewport();
+  await expect(demo.locator(".http-message code")).toContainText(
+    "GET /connect/library HTTP/1.1",
+  );
+  await next.click();
+  await expect(demo.getByText("Step 2 of 14")).toBeVisible();
+  await expect(demo.getByText("HTTP response", { exact: true })).toBeVisible();
+  await expect(demo.locator(".http-message code")).toContainText(
+    "Location: https://login.example/authorize",
+  );
+  await demo.getByRole("button", { name: "Previous", exact: true }).click();
+  await expect(demo.getByText("Step 1 of 14")).toBeVisible();
 });

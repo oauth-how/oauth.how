@@ -1,4 +1,12 @@
 ---
+import {
+  BookOpen,
+  CodeXml,
+  FileText,
+  ListTree,
+  SlidersHorizontal,
+  Terminal,
+} from "@lucide/astro";
 import SiteLayout from "../layouts/SiteLayout.astro";
 
 const definitions = [
@@ -89,73 +97,108 @@ const specifications = [
         Look up the terms, parameters, and specifications used in the lessons.
       </p>
     </header>
-    <nav class="track-nav" aria-label="Reference sections">
-      <a href="#terms">Terminology</a>
-      <a href="#parameters">Parameters</a>
-      <a href="#http">HTTP example</a>
-      <a href="#specifications">Specifications</a>
-    </nav>
-    <div class="prose">
-      <h2 id="terms">Terminology</h2>
-      <dl class="definitions">
-        {definitions.map(([term, definition]) => (
-          <div>
-            <dt>{term}</dt>
-            <dd>{definition}</dd>
-          </div>
-        ))}
-      </dl>
-      <h2 id="parameters">Authorization Code + PKCE parameters</h2>
-      <dl class="definitions">
-        <div>
-          <dt>
-            <code>response_type=code</code>
-          </dt>
-          <dd>Requests an authorization code at the authorization endpoint.</dd>
-        </div>
-        <div>
-          <dt>
-            <code>state</code>
-          </dt>
-          <dd>
-            Client-generated value returned in the authorization response. The
-            client can use it to bind the callback to the initiating browser
-            session.
-          </dd>
-        </div>
-        <div>
-          <dt>
-            <code>code_challenge</code>, <code>code_challenge_method=S256</code>
-          </dt>
-          <dd>
-            The verifier commitment and its transformation, sent through the
-            browser.
-          </dd>
-        </div>
-        <div>
-          <dt>
-            <code>grant_type=authorization_code</code>,{" "}
-            <code>code_verifier</code>
-          </dt>
-          <dd>
-            The grant type and the original verifier in the token request body.
-          </dd>
-        </div>
-      </dl>
-      <h2 id="http">Bearer token request</h2>
-      <pre><code>{"GET /v1/saved-books HTTP/1.1\nHost: library-api.example\nAuthorization: Bearer demo_at_TVW6gksBwL4M"}</code></pre>
-      <p>
-        See the <a href="/playground/#pkce">complete HTTP exchange</a> for the
-        fictional Reading List client.
-      </p>
-      <h2 id="specifications">Specifications</h2>
-      <ul>
-        {specifications.map(([label, url]) => (
+    <div class="docs-layout">
+      <nav class="section-index" aria-label="Reference sections">
+        <p>
+          <ListTree size={17} stroke-width={1.8} aria-hidden="true" /> On this
+          page
+        </p>
+        <ul>
           <li>
-            <a href={url}>{label}</a>
+            <a href="#terms">
+              <BookOpen size={15} aria-hidden="true" />
+              Terminology
+            </a>
           </li>
-        ))}
-      </ul>
+          <li>
+            <a href="#parameters">
+              <SlidersHorizontal size={15} aria-hidden="true" />
+              Parameters
+            </a>
+          </li>
+          <li>
+            <a href="#http">
+              <Terminal size={15} aria-hidden="true" />
+              HTTP example
+            </a>
+          </li>
+          <li>
+            <a href="#specifications">
+              <FileText size={15} aria-hidden="true" />
+              Specifications
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="prose reference-body">
+        <h2 id="terms">Terminology</h2>
+        <dl class="definitions">
+          {definitions.map(([term, definition]) => (
+            <div>
+              <dt>{term}</dt>
+              <dd>{definition}</dd>
+            </div>
+          ))}
+        </dl>
+        <h2 id="parameters">Authorization Code + PKCE parameters</h2>
+        <dl class="definitions">
+          <div>
+            <dt>
+              <code>response_type=code</code>
+            </dt>
+            <dd>
+              Requests an authorization code at the authorization endpoint.
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <code>state</code>
+            </dt>
+            <dd>
+              Client-generated value returned in the authorization response. The
+              client can use it to bind the callback to the initiating browser
+              session.
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <code>code_challenge</code>,{" "}
+              <code>code_challenge_method=S256</code>
+            </dt>
+            <dd>
+              The verifier commitment and its transformation, sent through the
+              browser.
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <code>grant_type=authorization_code</code>,{" "}
+              <code>code_verifier</code>
+            </dt>
+            <dd>
+              The grant type and the original verifier in the token request
+              body.
+            </dd>
+          </div>
+        </dl>
+        <h2 id="http">Bearer token request</h2>
+        <pre><code>{"GET /v1/saved-books HTTP/1.1\nHost: library-api.example\nAuthorization: Bearer demo_at_TVW6gksBwL4M"}</code></pre>
+        <p>
+          See the <a href="/playground/#pkce">complete HTTP exchange</a> for the
+          fictional Reading List client.
+        </p>
+        <h2 id="specifications">Specifications</h2>
+        <ul class="spec-list">
+          {specifications.map(([label, url]) => (
+            <li>
+              <a href={url}>
+                <CodeXml size={17} stroke-width={1.8} aria-hidden="true" />
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </SiteLayout>

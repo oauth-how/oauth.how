@@ -1,3 +1,11 @@
+import {
+  Braces,
+  CheckCircle2,
+  ChevronDown,
+  CircleX,
+  Clock3,
+  ShieldCheck,
+} from "lucide-solid";
 import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import {
   decodeSample,
@@ -53,18 +61,24 @@ export default function TokenInspector() {
       <div class="token-controls">
         <label>
           <span>Sample</span>
-          <select
-            disabled={!ready()}
-            value={scenario()}
-            onChange={(event) => select(event.currentTarget.value)}
-          >
-            <For each={scenarios}>
-              {(key) => <option value={key}>{samples[key].label}</option>}
-            </For>
-          </select>
+          <span class="select-field">
+            <select
+              disabled={!ready()}
+              value={scenario()}
+              onChange={(event) => select(event.currentTarget.value)}
+            >
+              <For each={scenarios}>
+                {(key) => <option value={key}>{samples[key].label}</option>}
+              </For>
+            </select>
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
+          </span>
         </label>
         <span class="token-clock">
-          <span>Lab clock</span>
+          <span>
+            <Clock3 size={15} strokeWidth={1.8} aria-hidden="true" />
+            Lab clock
+          </span>
           <time dateTime={showTime(sample().now)}>
             {showTime(sample().now)}
           </time>
@@ -75,12 +89,16 @@ export default function TokenInspector() {
           disabled={!ready() || pending()}
           onClick={() => void verify()}
         >
+          <ShieldCheck size={17} strokeWidth={1.8} aria-hidden="true" />
           {pending() ? "Verifying…" : "Verify token"}
         </button>
       </div>
 
       <details class="token-raw">
-        <summary>View compact token</summary>
+        <summary>
+          <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
+          View compact token
+        </summary>
         <pre>
           <code>{sample().token}</code>
         </pre>
@@ -88,13 +106,19 @@ export default function TokenInspector() {
 
       <div class="token-fields">
         <div>
-          <h3>Decoded header</h3>
+          <h3>
+            <Braces size={16} strokeWidth={1.8} aria-hidden="true" />
+            Decoded header
+          </h3>
           <pre>
             <code>{json(decoded().header)}</code>
           </pre>
         </div>
         <div>
-          <h3>Decoded claims</h3>
+          <h3>
+            <Braces size={16} strokeWidth={1.8} aria-hidden="true" />
+            Decoded claims
+          </h3>
           <pre>
             <code>{json(decoded().payload)}</code>
           </pre>
@@ -116,10 +140,21 @@ export default function TokenInspector() {
             const value = outcome();
             return (
               <p classList={{ accepted: value.ok, rejected: !value.ok }}>
-                <strong>{value.ok ? "Accepted." : "Rejected."}</strong>{" "}
-                {value.ok
-                  ? "The signature is valid and the claims satisfy the library API’s lab policy."
-                  : `${value.signature === "valid" ? "The signature is valid. " : ""}${value.reason}`}
+                {value.ok ? (
+                  <CheckCircle2
+                    size={18}
+                    strokeWidth={1.8}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <CircleX size={18} strokeWidth={1.8} aria-hidden="true" />
+                )}
+                <span>
+                  <strong>{value.ok ? "Accepted." : "Rejected."}</strong>{" "}
+                  {value.ok
+                    ? "The signature is valid and the claims satisfy the library API’s lab policy."
+                    : `${value.signature === "valid" ? "The signature is valid. " : ""}${value.reason}`}
+                </span>
               </p>
             );
           }}
