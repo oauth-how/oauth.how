@@ -16,9 +16,12 @@ npm ci
 npm run dev
 ```
 
-Deploy the generated `dist/` directory to a static host. See
-[Cloudflare Pages and static deployment](docs/deployment.md) for the GitHub
-integration, pull-request previews, and nested lesson URLs.
+With Just installed, run `just` to list the local recipes.
+`just check` runs type, lint, and formatting checks. `just test` runs unit
+tests. `just ci` also builds the site and runs browser tests. To use an
+existing Chromium executable, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to its
+path. `just preview` builds the production site and listens on all network
+interfaces. From another machine, open `http://<vm-ip>:4322`.
 
 ## How it fits together
 
