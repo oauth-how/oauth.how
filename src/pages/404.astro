@@ -1,0 +1,24 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="Page not found"
+  description="This page could not be found on oauth.how."
+  noindex
+>
+  <div class="wrap page">
+    <header class="page-intro">
+      <h1>Page not found</h1>
+      <p>Browse the curriculum to find a lesson or return to the homepage.</p>
+    </header>
+    <div class="hero-actions">
+      <a href="/learn/" class="button primary">
+        Browse lessons
+      </a>
+      <a href="/" class="button secondary">
+        Go home
+      </a>
+    </div>
+  </div>
+</SiteLayout>

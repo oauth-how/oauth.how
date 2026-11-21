@@ -1,0 +1,39 @@
+---
+import FlowSimulation from "../components/FlowSimulation.astro";
+import { pkceFlow } from "../simulation/flows/authorization-code-pkce";
+import TokenInspector from "../components/TokenInspector";
+import SiteLayout from "../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="Playground"
+  description="Step through OAuth Authorization Code with PKCE and verify a sample JWT with the browser’s Web Crypto API."
+>
+  <div class="wrap page">
+    <header class="page-intro">
+      <h1>Playground</h1>
+      <p>
+        Inspect a simulated OAuth exchange, then decode and verify a sample
+        access token.
+      </p>
+    </header>
+    <FlowSimulation flow={pkceFlow} anchor="pkce" />
+    <section class="token-lab" id="tokens" aria-labelledby="token-heading">
+      <h2 id="token-heading">Inspect a JWT</h2>
+      <p>
+        Read the decoded fields first. Then verify the signature with the lab’s
+        public key and see which claims the library API accepts at a fixed time.
+        The browser uses built-in sample tokens and makes no verification
+        requests.
+      </p>
+      <TokenInspector client:visible />
+      <p>
+        Explore how this compares with{" "}
+        <a href="/learn/jwt-paseto-and-opaque-tokens/">
+          PASETO and opaque tokens
+        </a>
+        .
+      </p>
+    </section>
+  </div>
+</SiteLayout>

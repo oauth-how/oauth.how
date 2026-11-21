@@ -1,0 +1,96 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  home?: boolean;
+  noindex?: boolean;
+}
+
+const { title, description, home, noindex } = Astro.props;
+const pageTitle = home ? title : `${title} · oauth.how`;
+const pathname = Astro.url.pathname;
+const canonical = new URL(pathname, Astro.site);
+const destinations = [
+  { href: "/learn/", label: "Learn" },
+  { href: "/playground/", label: "Playground" },
+  { href: "/reference/", label: "Reference" },
+  { href: "/about/", label: "About" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <title>{pageTitle}</title>
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="oauth.how" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="wordmark" href="/" aria-label="oauth.how home">
+          <img src="/favicon.svg" alt="" width="34" height="34" />
+          oauth<span>.how</span>
+        </a>
+        <nav aria-label="Main navigation">
+          {destinations.map(({ href, label }) => (
+            <a
+              href={href}
+              class:list={{ current: pathname.startsWith(href) }}
+              aria-current={pathname === href ? "page" : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+        <a class="source-link" href="https://github.com/oauth-how/oauth.how">
+          GitHub
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-13-2 14" />
+          </svg>
+        </a>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <a class="wordmark" href="/">
+          <img src="/favicon.svg" alt="" width="30" height="30" />
+          oauth<span>.how</span>
+        </a>
+        <p>Open-source education for OAuth and identity.</p>
+        <nav aria-label="Footer navigation">
+          <a href="/about/">Contribute</a>
+          <a href="/reference/#specifications">Specifications</a>
+          <a href="https://github.com/oauth-how/oauth.how">Source</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+.token-lab {
+  margin-top: 3rem;
+}
+.token-lab > p {
+  max-width: 72ch;
+  color: var(--muted);
+  margin: 0.65rem 0 1rem;
+}
+.token-inspector {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--surface);
+}
+.token-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1.2rem;
+}
+.token-controls label,
+.token-clock {
+  display: grid;
+  gap: 0.25rem;
+}
+.token-controls label > span,
+.token-clock > span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+.token-controls select,
+.token-clock time {
+  min-height: 2.85rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+}
+.token-clock time {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  align-content: center;
+}
+.token-controls button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.token-raw {
+  margin-top: 1rem;
+}
+.token-raw summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.token-inspector pre {
+  margin: 0.45rem 0 0;
+  padding: 0.85rem;
+  background: var(--diagram);
+  color: var(--on-dark);
+  border-radius: 0.55rem;
+  font-size: 0.91rem;
+}
+.token-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.token-fields h3 {
+  font-size: 1.05rem;
+}
+.token-result {
+  margin-top: 1rem;
+  padding: 0.65rem 0.8rem;
+  background: var(--subtle);
+  border-radius: 0.5rem;
+}
+.token-result .accepted {
+  color: var(--success);
+}
+.token-result .rejected {
+  color: var(--danger);
+}
+@media (max-width: 40rem) {
+  .token-fields {
+    grid-template-columns: 1fr;
+  }
+}

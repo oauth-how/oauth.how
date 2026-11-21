@@ -1,0 +1,51 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const repository = "https://github.com/oauth-how/oauth.how";
+---
+
+<SiteLayout
+  title="About"
+  description="Learn about the open-source educational project and contribute to its lessons, diagrams, and protocol simulations."
+>
+  <div class="wrap page">
+    <header class="page-intro">
+      <h1>About oauth.how</h1>
+      <p>
+        An open-source, vendor-neutral guide to OAuth, OpenID Connect, and
+        identity.
+      </p>
+    </header>
+    <div class="prose">
+      <p>
+        OAuth is easier to understand once you can see who sends each message,
+        who receives it, and which checks they make. oauth.how pairs short
+        lessons with a trace you can pause and inspect. All accounts, hosts,
+        credentials, and tokens in the exercises are fictional.
+      </p>
+      <h2>Contribute</h2>
+      <p>
+        Help improve a lesson, check a protocol trace against its specification,
+        or add a new example. If a detail looks wrong, include the page, the
+        relevant step, and a section of the specification when filing an issue.
+      </p>
+      <ul>
+        <li>
+          <a href={repository + "/issues"}>Open an issue on GitHub</a>
+        </li>
+        <li>
+          <a href={repository + "/blob/HEAD/CONTRIBUTING.md"}>
+            Read the contribution guide
+          </a>
+        </li>
+        <li>
+          <a href={repository}>Browse the source</a>
+        </li>
+      </ul>
+      <h2>License</h2>
+      <p>
+        The site and its original illustrations are available under the{" "}
+        <a href={repository + "/blob/HEAD/LICENSE"}>BSD 3-Clause License</a>.
+      </p>
+    </div>
+  </div>
+</SiteLayout>

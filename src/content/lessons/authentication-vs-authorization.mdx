@@ -1,0 +1,37 @@
+---
+title: Authentication vs authorization
+description: Separate proving who someone is from deciding what they can do.
+track: foundations
+order: 1
+references:
+  - label: OpenID Connect Core §1 · Authentication and identity
+    url: https://openid.net/specs/openid-connect-core-1_0.html#Introduction
+  - label: RFC 6749 §1 · Delegated authorization
+    url: https://www.rfc-editor.org/rfc/rfc6749.html#section-1
+---
+
+Mina signs in to her library account and opens her saved books. The library makes two decisions. It establishes that this session belongs to Mina. Then it checks whether Mina can read the requested list.
+
+## Who is making the request?
+
+**Authentication** establishes the identity associated with a request or a session. Mina might use a passkey or a password to sign in. Those are credentials. After sign-in, a session can let the application recognize later requests without asking for the credentials again.
+
+## Is the request allowed?
+
+**Authorization** decides whether a particular operation is permitted. Mina can read her list. Editing another reader's list may be forbidden, even when the library knows exactly who she is. Some resources, such as a public catalog, can be read anonymously.
+
+## How can another app act on Mina’s behalf?
+
+When Mina connects a separate Reading List app, OAuth 2.0 lets the library grant that app limited access. The app presents an access token to the library API. The API decides whether this token is valid and authorizes the requested operation. The client does not need Mina’s library credentials.
+
+For interoperable sign-in, [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#Overview) adds an identity layer to OAuth. The client validates an ID token under OpenID Connect rules to establish the outcome of the sign-in. An access token for the library API serves a different recipient and purpose.
+
+## Check your understanding
+
+Mina has successfully signed in. A request to edit a book list receives `403 Forbidden`. What question should you investigate?
+
+<details>
+  <summary>Reveal the answer</summary>
+  Check whether the authenticated request has permission to edit the list. A
+  read-only grant or ownership policy could account for the denial.
+</details>

@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from "astro:content";
+import FlowSimulation from "../../components/FlowSimulation.astro";
+import { flows } from "../../simulation/flows";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { curriculum } from "../../lib/curriculum";
+
+export async function getStaticPaths() {
+  const lessons = (await getCollection("lessons")).sort(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return lessons.map((lesson, index) => ({
+    params: { lesson: lesson.id },
+    props: { lesson, previous: lessons[index - 1], next: lessons[index + 1] },
+  }));
+}
+
+const { lesson, previous, next } = Astro.props;
+const { Content } = await render(lesson);
+const flow = lesson.data.simulation ? flows[lesson.data.simulation] : undefined;
+const track = curriculum.find(({ id }) => id === lesson.data.track);
+---
+
+<SiteLayout title={lesson.data.title} description={lesson.data.description}>
+  <div class="wrap page lesson">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/learn/">Learn</a>
+      <span aria-hidden="true">/</span>
+      <a href={`/learn/#${lesson.data.track}`}>{track?.title}</a>
+    </nav>
+    <article>
+      <header class="page-intro">
+        <h1>{lesson.data.title}</h1>
+        <p>{lesson.data.description}</p>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+      {flow && <FlowSimulation flow={flow} heading="Follow the exchange" />}
+      <section
+        class="prose lesson-references"
+        aria-labelledby="lesson-references"
+      >
+        <h2 id="lesson-references">Specifications</h2>
+        <ul>
+          {lesson.data.references.map((reference) => (
+            <li>
+              <a href={reference.url}>{reference.label}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </article>
+    {(previous || next) && (
+      <nav aria-label="Adjacent lessons" class="lesson-pagination">
+        {previous && (
+          <a class="button secondary" href={`/learn/${previous.id}/`}>
+            <span>Previous lesson</span>
+            {previous.data.title}
+          </a>
+        )}
+        {next && (
+          <a class="button secondary" href={`/learn/${next.id}/`}>
+            <span>Next lesson</span>
+            {next.data.title}
+          </a>
+        )}
+      </nav>
+    )}
+  </div>
+</SiteLayout>

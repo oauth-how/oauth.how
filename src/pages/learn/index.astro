@@ -1,0 +1,53 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { curriculum } from "../../lib/curriculum";
+
+const lessons = (await getCollection("lessons")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<SiteLayout
+  title="Learn"
+  description="Follow a progressive curriculum on OAuth, OpenID Connect, tokens, and authorization."
+>
+  <div class="wrap page">
+    <header class="page-intro">
+      <h1>Learn</h1>
+      <p>
+        Start with identity and permissions, then follow a delegated
+        authorization flow and examine the tokens it produces.
+      </p>
+    </header>
+    <nav class="track-nav" aria-label="Curriculum sections">
+      {curriculum.map(({ id, title }) => (
+        <a href={`#${id}`}>{title}</a>
+      ))}
+    </nav>
+    <div class="curriculum">
+      {curriculum.map(({ id, title, level, topics }) => (
+        <section class="track" id={id}>
+          <p class="eyebrow">{level}</p>
+          <h2>{title}</h2>
+          {lessons
+            .filter((lesson) => lesson.data.track === id)
+            .map((lesson) => (
+              <a class="lesson-link" href={`/learn/${lesson.id}/`}>
+                <strong>{lesson.data.title}</strong>
+                <span>{lesson.data.description}</span>
+              </a>
+            ))}
+          <details class="track-topics">
+            <summary>Planned topics</summary>
+            <ul>
+              {topics.map((topic) => (
+                <li>{topic}</li>
+              ))}
+            </ul>
+          </details>
+        </section>
+      ))}
+    </div>
+  </div>
+</SiteLayout>

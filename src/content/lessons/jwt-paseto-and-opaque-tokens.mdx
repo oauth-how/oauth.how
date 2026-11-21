@@ -1,0 +1,43 @@
+---
+title: JWT vs PASETO vs opaque tokens
+description: Compare readable claims, cryptographic verification, and server-side token lookup.
+track: tokens
+order: 5
+references:
+  - label: RFC 7519 · JSON Web Token
+    url: https://www.rfc-editor.org/rfc/rfc7519.html
+  - label: RFC 8725 §3 · JWT security best practices
+    url: https://www.rfc-editor.org/rfc/rfc8725.html#section-3
+  - label: RFC 9068 §4 · JWT access token validation
+    url: https://www.rfc-editor.org/rfc/rfc9068.html#section-4
+  - label: RFC 7662 §2 · OAuth token introspection
+    url: https://www.rfc-editor.org/rfc/rfc7662.html#section-2
+  - label: PASETO protocol specification · Version 4
+    url: https://github.com/paseto-standard/paseto-spec/blob/master/docs/01-Protocol-Versions/Version4.md
+---
+
+A token's purpose tells you where to use it. Its format tells the intended consumer how it is represented and what processing it might need. An OAuth access token can be a JWT or an opaque handle. The definition of an OpenID Connect ID token requires a JWT.
+
+## Readability and cryptographic protection
+
+| Representation       | What the consumer can do                                                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| JWT carried in a JWS | Decode the encoded header and claims. Check integrity and authenticity using a trusted verification key and an allowed algorithm.             |
+| JWT carried in a JWE | Use the intended recipient’s key to decrypt authenticated ciphertext. Apply the application’s trust and claim validation rules to the result. |
+| PASETO `public`      | Read the message and verify its signature with a public key for the specified version.                                                        |
+| PASETO `local`       | Authenticate and decrypt the message using a shared symmetric key.                                                                            |
+| Opaque handle        | Present the identifier to a trusted token store or introspection service to learn its status and metadata.                                    |
+
+Base64url encoding makes bytes safe to carry in URLs and compact token strings. Anyone with a signed, unencrypted JWT can decode its claims. A signature protects integrity and can establish authenticity under the verifier’s key policy. Encryption protects confidentiality. A recipient that decrypts a token still has to apply the issuer, token type, and claim checks required by its protocol.
+
+PASETO fixes its cryptographic choices by version and purpose. It has its own specification. [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html) defines an interoperable OAuth profile for JWT access tokens. An issuer and API would need their own agreement to use PASETO as the representation of an access token.
+
+## Verify, look up, and revoke
+
+A resource server can verify a signed token locally if it has trusted keys and uses the correct validation rules. For a JWT access token, checks include token type, trusted issuer, intended audience, expiration, and signature. A valid signature alone leaves the API's scope and resource authorization checks to perform.
+
+With [OAuth token introspection](https://www.rfc-editor.org/rfc/rfc7662.html#section-2), an authorized consumer asks the authorization server for the token’s active state and applicable metadata. Introspection supports opaque handles and can also be used for structured tokens when the deployment supports it.
+
+Local verification with only a token, trusted keys, and a clock cannot observe an early revocation. An API that needs to learn about revocation before expiry needs current state or a revocation signal. Introspection gives a view of token state at the time of the call. Caching that result can delay enforcement. Short-lived tokens limit how long stale authorization can persist.
+
+[Try the token inspector](/playground/#tokens) to compare readable claims with a working signature and claim check.

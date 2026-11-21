@@ -1,0 +1,33 @@
+---
+title: Authorization Code + PKCE
+description: Trace a browser redirect, the back-channel code exchange, and a protected API request.
+track: oauth
+order: 3
+simulation: authorization-code-pkce
+references:
+  - label: RFC 6749 §4.1 · Authorization Code Grant
+    url: https://www.rfc-editor.org/rfc/rfc6749.html#section-4.1
+  - label: RFC 7636 §4 · Proof Key for Code Exchange
+    url: https://www.rfc-editor.org/rfc/rfc7636.html#section-4
+  - label: RFC 9700 §2.1 · Protecting redirect-based flows
+    url: https://www.rfc-editor.org/rfc/rfc9700.html#section-2.1
+  - label: RFC 6750 §2.1 · Bearer authorization header
+    url: https://www.rfc-editor.org/rfc/rfc6750.html#section-2.1
+---
+
+Mina wants Reading List to display her saved library books. Reading List is a confidential web client with a backend. Mina already has a Reading List session. The app’s host-only session cookie accompanies its initial request and the top-level GET callback. It asks the library authorization server for delegated read access. The library API controls access to the books.
+
+## Why exchange a code?
+
+The browser transports a temporary code back to the client. The client backend exchanges that code for an access token over a direct TLS connection to the authorization server. The browser carries the redirects and callback. The token exchange and API call use the back channel.
+
+[PKCE](https://www.rfc-editor.org/rfc/rfc7636.html#section-4) binds the code to the authorization attempt. The client generates a fresh random verifier and sends its challenge with the authorization request. With the `S256` method, the challenge is `BASE64URL(SHA256(ASCII(code_verifier)))`, with padding omitted. The authorization server saves the challenge with the code. During redemption it derives the challenge from the presented verifier and compares the two values. A mismatch yields `invalid_grant`.
+
+## What each check protects
+
+- **Registered redirect URI.** The authorization server compares the requested URI to the registered URI for this web client. Redemption includes the same URI because the authorization request included it.
+- **`state`.** This client binds a random, single-use value to the initiating browser session and checks the returned value before redemption. [RFC 9700 §2.1](https://www.rfc-editor.org/rfc/rfc9700.html#section-2.1) also describes when a client that has ensured PKCE support can rely on its CSRF protection.
+- **PKCE.** A code alone is insufficient for an exchange when the authorization server requires the corresponding verifier. Public clients must use PKCE. Confidential clients are also recommended to use it and still authenticate at the token endpoint. This trace illustrates HTTP Basic client authentication. [RFC 9700 §2.5](https://www.rfc-editor.org/rfc/rfc9700.html#section-2.5) recommends asymmetric client authentication such as mutual TLS or signed JWTs.
+- **Scope and audience.** The library API confirms that the access token applies to this API, is active, and grants read access to the requested resource.
+
+The example follows a successful grant. A denied approval can return `access_denied` to a validated callback. If the redirect URI is invalid, the authorization server must avoid redirecting to it. In this single-issuer example, the client has an existing trust relationship with the library authorization server.

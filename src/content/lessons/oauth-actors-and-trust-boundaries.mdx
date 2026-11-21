@@ -1,0 +1,43 @@
+---
+title: OAuth actors and trust boundaries
+description: Identify the parties in an OAuth exchange and what each one can trust.
+track: foundations
+order: 2
+references:
+  - label: RFC 6749 §1.1 · Roles
+    url: https://www.rfc-editor.org/rfc/rfc6749.html#section-1.1
+  - label: RFC 6749 §2.1 · Client types
+    url: https://www.rfc-editor.org/rfc/rfc6749.html#section-2.1
+  - label: RFC 9700 §2.1 · Protecting redirect-based flows
+    url: https://www.rfc-editor.org/rfc/rfc9700.html#section-2.1
+---
+
+When Reading List connects to the library, each party has a different responsibility. OAuth names four roles. The browser transports some of their messages.
+
+| Role                 | In this example                   | Responsibility                                             |
+| -------------------- | --------------------------------- | ---------------------------------------------------------- |
+| Resource owner       | Mina                              | Can authorize access to her saved books                    |
+| Client               | Reading List                      | Requests a grant and uses the resulting access token       |
+| Authorization server | Library sign-in and grant service | Validates the request, handles approval, and issues tokens |
+| Resource server      | Library API                       | Protects the saved books and enforces access               |
+
+## Follow the trust boundaries
+
+- **Browser and authorization server.** Mina interacts with the library's authorization server in her browser. Her credentials belong at that server.
+- **Browser and client.** The browser follows a redirect to the client with an authorization result. The client correlates the callback with a pending transaction and validates it before exchanging the code.
+- **Client and token endpoint.** A confidential web client can hold credentials on its backend and authenticate to the token endpoint. Browser-based public clients cannot keep a shared secret from users who receive their code.
+- **Client and API.** The client presents an access token. The API uses trusted issuer configuration or trusted token data to check the token against resource policy.
+
+The authorization and resource servers can be operated by the same organization or share infrastructure. The roles describe responsibilities, so distinguish them even when a single system performs both.
+
+## Check your understanding
+
+A value appears in the callback URL and looks like a code. What must the client check before treating the callback as part of its own authorization attempt?
+
+<details>
+  <summary>Reveal the answer</summary>
+  It must correlate the callback with the authorization attempt for this browser
+  and apply the checks appropriate to the grant and client. In the Reading List
+  flow, the client checks the returned state and redeems the code with the saved
+  PKCE verifier at the configured token endpoint.
+</details>

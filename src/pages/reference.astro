@@ -1,0 +1,161 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const definitions = [
+  [
+    "Authorization grant",
+    "A credential representing authorization that a client can use to obtain an access token. The authorization code is one type of grant.",
+  ],
+  [
+    "Authorization endpoint",
+    "The endpoint the browser visits to request authorization from the resource owner.",
+  ],
+  [
+    "Token endpoint",
+    "The endpoint a client contacts directly to obtain or refresh tokens.",
+  ],
+  [
+    "Redirect URI",
+    "The registered client callback destination where the browser delivers the authorization result to the client.",
+  ],
+  [
+    "Scope",
+    "A value that describes requested or granted access. Its meaning is defined by the authorization server and resource policy.",
+  ],
+  [
+    "Audience",
+    "The intended recipient of a token. An API checks that an access token is intended for it.",
+  ],
+  ["Issuer", "The authority that issued the token or authentication result."],
+  [
+    "Bearer token",
+    "A token that can be used by whoever holds it. The recipient checks the token and its authorization.",
+  ],
+  [
+    "Introspection",
+    "An authenticated request to learn whether a token is active and obtain applicable metadata.",
+  ],
+  [
+    "PKCE",
+    "Proof Key for Code Exchange. A client commits to a fresh verifier using a challenge and presents the verifier when redeeming the code.",
+  ],
+];
+const specifications = [
+  ["RFC 6749 · OAuth 2.0", "https://www.rfc-editor.org/rfc/rfc6749.html"],
+  [
+    "RFC 9700 · OAuth 2.0 Security Best Current Practice",
+    "https://www.rfc-editor.org/rfc/rfc9700.html",
+  ],
+  [
+    "RFC 7636 · Proof Key for Code Exchange",
+    "https://www.rfc-editor.org/rfc/rfc7636.html",
+  ],
+  [
+    "RFC 6750 · Bearer Token Usage",
+    "https://www.rfc-editor.org/rfc/rfc6750.html",
+  ],
+  [
+    "OpenID Connect Core 1.0",
+    "https://openid.net/specs/openid-connect-core-1_0.html",
+  ],
+  ["RFC 7519 · JSON Web Token", "https://www.rfc-editor.org/rfc/rfc7519.html"],
+  [
+    "RFC 8725 · JWT Best Current Practices",
+    "https://www.rfc-editor.org/rfc/rfc8725.html",
+  ],
+  [
+    "RFC 9068 · JWT Profile for OAuth Access Tokens",
+    "https://www.rfc-editor.org/rfc/rfc9068.html",
+  ],
+  [
+    "RFC 7662 · Token Introspection",
+    "https://www.rfc-editor.org/rfc/rfc7662.html",
+  ],
+  [
+    "RFC 7009 · Token Revocation",
+    "https://www.rfc-editor.org/rfc/rfc7009.html",
+  ],
+];
+---
+
+<SiteLayout
+  title="Reference"
+  description="Look up OAuth and identity terminology, protocol parameters, HTTP examples, and specifications."
+>
+  <div class="wrap page">
+    <header class="page-intro">
+      <h1>Reference</h1>
+      <p>
+        Look up the terms, parameters, and specifications used in the lessons.
+      </p>
+    </header>
+    <nav class="track-nav" aria-label="Reference sections">
+      <a href="#terms">Terminology</a>
+      <a href="#parameters">Parameters</a>
+      <a href="#http">HTTP example</a>
+      <a href="#specifications">Specifications</a>
+    </nav>
+    <div class="prose">
+      <h2 id="terms">Terminology</h2>
+      <dl class="definitions">
+        {definitions.map(([term, definition]) => (
+          <div>
+            <dt>{term}</dt>
+            <dd>{definition}</dd>
+          </div>
+        ))}
+      </dl>
+      <h2 id="parameters">Authorization Code + PKCE parameters</h2>
+      <dl class="definitions">
+        <div>
+          <dt>
+            <code>response_type=code</code>
+          </dt>
+          <dd>Requests an authorization code at the authorization endpoint.</dd>
+        </div>
+        <div>
+          <dt>
+            <code>state</code>
+          </dt>
+          <dd>
+            Client-generated value returned in the authorization response. The
+            client can use it to bind the callback to the initiating browser
+            session.
+          </dd>
+        </div>
+        <div>
+          <dt>
+            <code>code_challenge</code>, <code>code_challenge_method=S256</code>
+          </dt>
+          <dd>
+            The verifier commitment and its transformation, sent through the
+            browser.
+          </dd>
+        </div>
+        <div>
+          <dt>
+            <code>grant_type=authorization_code</code>,{" "}
+            <code>code_verifier</code>
+          </dt>
+          <dd>
+            The grant type and the original verifier in the token request body.
+          </dd>
+        </div>
+      </dl>
+      <h2 id="http">Bearer token request</h2>
+      <pre><code>{"GET /v1/saved-books HTTP/1.1\nHost: library-api.example\nAuthorization: Bearer demo_at_TVW6gksBwL4M"}</code></pre>
+      <p>
+        See the <a href="/playground/#pkce">complete HTTP exchange</a> for the
+        fictional Reading List client.
+      </p>
+      <h2 id="specifications">Specifications</h2>
+      <ul>
+        {specifications.map(([label, url]) => (
+          <li>
+            <a href={url}>{label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</SiteLayout>
